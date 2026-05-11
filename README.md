@@ -11,9 +11,7 @@ docker build -t cwa-claude-code .
 
 ### 2. 啟動 Claude Code TUI
 ```bash
-docker run -it -e CWA_LITELLM_KEY=sk-xxxx \
-  -v $HOME/.claude:/root/.claude \
-  cwa-claude-code
+docker run -it -e CWA_LITELLM_KEY=sk-xxxx -v $HOME/.claude:/root/.claude cwa-claude-code
 ```
 
 - `-it` — 互動式終端機（TUI 必要）
@@ -27,17 +25,12 @@ cp .env.example .env
 ```
 
 ```bash
-docker run -it --env-file .env \
-  -v $HOME/.claude:/root/.claude \
-  cwa-claude-code
+docker run -it --env-file .env -v $HOME/.claude:/root/.claude cwa-claude-code
 ```
 
 ### 選擇性：掛載專案目錄
 ```bash
-docker run -it --env-file .env \
-  -v $HOME/.claude:/root/.claude \
-  -v /path/to/project:/workspace \
-  cwa-claude-code
+docker run -it --env-file .env -v $HOME/.claude:/root/.claude -v /path/to/project:/workspace cwa-claude-code
 ```
 
 ## 環境變數
@@ -50,6 +43,7 @@ docker run -it --env-file .env \
 | `ANTHROPIC_DEFAULT_OPUS_MODEL` | 否 | Anthropic 預設 | 覆寫 Opus 模型 |
 | `ANTHROPIC_DEFAULT_SONNET_MODEL` | 否 | Anthropic 預設 | 覆寫 Sonnet 模型 |
 | `ANTHROPIC_DEFAULT_HAIKU_MODEL` | 否 | Anthropic 預設 | 覆寫 Haiku 模型 |
+| `SKIP_SSL_VERIFY` | 否 | — | 設為 `1` 跳過 SSL 憑證驗證（解決企業代理或自簽憑證問題） |
 
 ## 使用者層級設定
 
