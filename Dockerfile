@@ -1,8 +1,8 @@
 # Dockerfile for Claude Code with LiteLLM integration
-FROM node:22-slim
+FROM node:22-alpine
 
 # Install Claude Code CLI globally
-RUN npm install -g @anthropic-ai/claude-code
+RUN npm install -g @anthropic-ai/claude-code && npm cache clean --force
 
 # Create directory for persistent Claude config/sessions
 RUN mkdir -p /root/.claude
