@@ -44,6 +44,9 @@ docker run -it --env-file .env -v $HOME/.claude:/root/.claude -v $HOME/.claude.j
 | `ANTHROPIC_DEFAULT_SONNET_MODEL` | 否 | Anthropic 預設 | 覆寫 Sonnet 模型 |
 | `ANTHROPIC_DEFAULT_HAIKU_MODEL` | 否 | Anthropic 預設 | 覆寫 Haiku 模型 |
 | `SKIP_SSL_VERIFY` | 否 | — | 設為 `1` 跳過 SSL 憑證驗證（解決企業代理或自簽憑證問題） |
+| `SKIP_UPDATE` | 否 | — | 設為 `1` 跳過啟動時自動更新 Claude Code CLI |
+| `HTTP_PROXY` | 否 | — | HTTP 代理伺服器位址（例如 `http://proxy:8080`） |
+| `HTTPS_PROXY` | 否 | — | HTTPS 代理伺服器位址（例如 `http://proxy:8080`） |
 
 ## 使用者層級設定
 

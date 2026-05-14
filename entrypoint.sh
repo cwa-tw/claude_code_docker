@@ -10,7 +10,9 @@ if [ "$SKIP_SSL_VERIFY" = "1" ] || [ "$SKIP_SSL_VERIFY" = "true" ]; then
   export NODE_TLS_REJECT_UNAUTHORIZED=0
 fi
 
-# Update Claude Code CLI before launching
-npm update -g @anthropic-ai/claude-code
+# Update Claude Code CLI before launching (skip with SKIP_UPDATE=1)
+if [ "$SKIP_UPDATE" != "1" ] && [ "$SKIP_UPDATE" != "true" ]; then
+  npm update -g @anthropic-ai/claude-code
+fi
 
 exec claude "$@"
