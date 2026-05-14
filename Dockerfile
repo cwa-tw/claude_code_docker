@@ -1,6 +1,9 @@
 # Dockerfile for Claude Code with LiteLLM integration
 FROM node:22-alpine
 
+# Install bash and other common shell utilities needed by Claude Code
+RUN apk add --no-cache bash git curl
+
 # Install Claude Code CLI globally
 RUN npm install -g @anthropic-ai/claude-code && npm cache clean --force
 
