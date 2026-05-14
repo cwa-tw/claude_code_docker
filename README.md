@@ -11,7 +11,7 @@ docker build -t cwa-claude-code .
 
 ### 2. 啟動 Claude Code TUI
 ```bash
-docker run -it -e CWA_LITELLM_KEY=sk-xxxx -v $HOME/.claude:/root/.claude cwa-claude-code
+docker run -it -e CWA_LITELLM_KEY=sk-xxxx -v $HOME/.claude:/root/.claude -v $HOME/.claude.json:/root/.claude.json cwa-claude-code
 ```
 
 - `-it` — 互動式終端機（TUI 必要）
@@ -25,12 +25,12 @@ cp .env.example .env
 ```
 
 ```bash
-docker run -it --env-file .env -v $HOME/.claude:/root/.claude cwa-claude-code
+docker run -it --env-file .env -v $HOME/.claude:/root/.claude -v $HOME/.claude.json:/root/.claude.json cwa-claude-code
 ```
 
 ### 選擇性：掛載專案目錄
 ```bash
-docker run -it --env-file .env -v $HOME/.claude:/root/.claude -v /path/to/project:/workspace cwa-claude-code
+docker run -it --env-file .env -v $HOME/.claude:/root/.claude -v $HOME/.claude.json:/root/.claude.json -v /path/to/project:/workspace cwa-claude-code
 ```
 
 ## 環境變數
