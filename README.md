@@ -1,75 +1,57 @@
 # Claude Code Docker (cwa-claude-code)
 
-將 Claude Code TUI 容器化，透過 CWA LiteLLM 連線。使用者可取得互動式 Claude Code 終端機，並保留設定與工作階段。
+容器化的 Claude Code TUI，透過 CWA LiteLLM 連線，並保留設定與工作階段。
+
+> 不想用 Docker？請見 [NATIVE.md](./NATIVE.md)。
 
 ## 快速開始
 
-### 1. 建置 Docker 映像檔
+### 1. 取得映像檔
+
+從 GHCR 拉取（推薦）：
+```bash
+docker login ghcr.io
+docker pull ghcr.io/cwa-tw/claude_code_docker:latest
+```
+
+或自行建置：
 ```bash
 docker build -t cwa-claude-code .
 ```
 
-### 2. 啟動 Claude Code TUI
-```bash
-docker run -it \
-  -e CWA_LITELLM_KEY=sk-xxxx \
-  -e PUID=$(id -u) -e PGID=$(id -g) \
-  -v $HOME/.claude:/home/claude/.claude \
-  -v $HOME/.claude.json:/home/claude/.claude.json \
-  cwa-claude-code
-```
+### 2. 設定 API 金鑰
 
-- `-it` — 互動式終端機（TUI 必要）
-- `-e CWA_LITELLM_KEY=sk-xxxx` — 你的 CWA LiteLLM API 金鑰
-- `-e PUID=$(id -u) -e PGID=$(id -g)` — 以你的主機使用者身分執行，避免產生 root 權限的檔案
-- `-v $HOME/.claude:/home/claude/.claude` — 在多次執行間保留使用者工作階段與設定
-
-### 建議：使用 `.env` 檔案保管 API 金鑰
 ```bash
 cp .env.example .env
 # 編輯 .env，填入 CWA_LITELLM_KEY=sk-xxxx
 ```
 
+### 3. 啟動
+
 ```bash
 docker run -it --env-file .env \
   -e PUID=$(id -u) -e PGID=$(id -g) \
   -v $HOME/.claude:/home/claude/.claude \
   -v $HOME/.claude.json:/home/claude/.claude.json \
-  cwa-claude-code
+  ghcr.io/cwa-tw/claude_code_docker:latest
 ```
 
-### 選擇性：掛載專案目錄
-```bash
-docker run -it --env-file .env \
-  -e PUID=$(id -u) -e PGID=$(id -g) \
-  -v $HOME/.claude:/home/claude/.claude \
-  -v $HOME/.claude.json:/home/claude/.claude.json \
-  -v /path/to/project:/workspace \
-  cwa-claude-code
-```
+掛載專案目錄請加上 `-v /path/to/project:/workspace`。
 
 ## 環境變數
 
 | 變數 | 必填 | 預設值 | 說明 |
 |---|---|---|---|
-| `CWA_LITELLM_KEY` | **是** | — | CWA LiteLLM API 金鑰（對應至 `ANTHROPIC_AUTH_TOKEN`） |
-| `ANTHROPIC_AUTH_TOKEN` | 否 | — | 若設定此值，將優先使用，`CWA_LITELLM_KEY` 會被忽略 |
-| `ANTHROPIC_BASE_URL` | 否 | `https://litellm.cwa.gov.tw` | LiteLLM 端點 URL |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL` | 否 | Anthropic 預設 | 覆寫 Opus 模型 |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | 否 | Anthropic 預設 | 覆寫 Sonnet 模型 |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | 否 | Anthropic 預設 | 覆寫 Haiku 模型 |
-| `PUID` | 否 | `0` (root) | 容器內執行程式的使用者 UID（建議設為 `$(id -u)`） |
-| `PGID` | 否 | `0` (root) | 容器內執行程式的群組 GID（建議設為 `$(id -g)`） |
-| `SKIP_SSL_VERIFY` | 否 | — | 設為 `1` 跳過 SSL 憑證驗證（解決企業代理或自簽憑證問題） |
-| `SKIP_UPDATE` | 否 | — | 設為 `1` 跳過啟動時自動更新 Claude Code CLI |
-| `HTTP_PROXY` | 否 | — | HTTP 代理伺服器位址（例如 `http://proxy:8080`） |
-| `HTTPS_PROXY` | 否 | — | HTTPS 代理伺服器位址（例如 `http://proxy:8080`） |
-
-## 使用者層級設定
-
-Claude Code 會讀取 `~/.claude/settings.json`。此檔案透過 volume mount 保留。
+| `CWA_LITELLM_KEY` | **是** | — | LiteLLM API 金鑰 |
+| `ANTHROPIC_AUTH_TOKEN` | 否 | — | 若設定則覆寫 `CWA_LITELLM_KEY` |
+| `ANTHROPIC_BASE_URL` | 否 | `https://litellm.cwa.gov.tw` | LiteLLM 端點 |
+| `ANTHROPIC_DEFAULT_{OPUS,SONNET,HAIKU}_MODEL` | 否 | Anthropic 預設 | 覆寫對應模型 |
+| `PUID` / `PGID` | 否 | `0` | 以主機使用者身分執行（建議 `$(id -u)` / `$(id -g)`） |
+| `SKIP_SSL_VERIFY` | 否 | — | 設 `1` 跳過 SSL 驗證 |
+| `SKIP_UPDATE` | 否 | — | 設 `1` 跳過啟動時自動更新 |
+| `HTTP_PROXY` / `HTTPS_PROXY` | 否 | — | 代理伺服器位址 |
 
 ## 注意事項
-- 切勿將 `.env` 或真實 API 金鑰提交至 git。
-- `~/.claude` 及 `~/.claude.json` 的 volume mount 可在容器重啟間保留所有工作階段、歷史紀錄與設定。
-- 設定 `PUID`/`PGID` 時，volume 應掛載至 `/home/claude/` 而非 `/root/`。
+- 勿將 `.env` 或 API 金鑰 commit 進 git。
+- 使用 `PUID`/`PGID` 時，volume 須掛到 `/home/claude/`，不是 `/root/`。
+- `~/.claude` 與 `~/.claude.json` 透過 volume 保留設定與工作階段。
