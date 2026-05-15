@@ -13,11 +13,11 @@ curl -fsSL https://claude.ai/install.sh | bash
 ```json
 {
   "env": {
-    "ANTHROPIC_BASE_URL": "https://litellm.dpi.dev",
-    "ANTHROPIC_AUTH_TOKEN": "sk-m535ZheYHP6CtVek4-MEdg",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "llama3.2:1b",
-    "ANTHROPIC_DEFAULT_SONNET_MODEL": "llama3.2:1b",
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "llama3.2:1b"
+    "ANTHROPIC_BASE_URL": "https://litellm.cwa.gov.tw",
+    "ANTHROPIC_AUTH_TOKEN": "sk-test-key",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "gcp_claude-opus-4-7",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "gcp_claude-sonnet-4-6",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "gcp_claude-haiku-4-5"
   }
 }
 ```
