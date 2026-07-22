@@ -7,16 +7,14 @@ PGID="${PGID:-0}"
 if [ "$PUID" != "0" ]; then
   # Create group if not exists
   if ! getent group "$PGID" > /dev/null 2>&1; then
-    addgroup -g "$PGID" claude
+    groupadd --gid "$PGID" claude
   fi
-  GROUP_NAME=$(getent group "$PGID" | cut -d: -f1)
 
   # Create user if not exists
   if ! getent passwd "$PUID" > /dev/null 2>&1; then
-    adduser -D -u "$PUID" -G "$GROUP_NAME" -h /home/claude claude
+    useradd --uid "$PUID" --gid "$PGID" --home-dir /home/claude --shell /bin/bash claude
   fi
-  USER_NAME=$(getent passwd "$PUID" | cut -d: -f1)
-  USER_HOME=$(getent passwd "$PUID" | cut -d: -f6)
+  USER_HOME=/home/claude
 
   # Ensure home directory and .claude config exist
   mkdir -p "$USER_HOME/.claude"
@@ -43,7 +41,7 @@ fi
 
 # Run as mapped user or root
 if [ "$PUID" != "0" ]; then
-  exec su-exec "$PUID:$PGID" claude "$@"
+  exec gosu "$PUID:$PGID" claude "$@"
 else
   exec claude "$@"
 fi

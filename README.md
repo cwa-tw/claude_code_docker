@@ -38,6 +38,9 @@ docker run -it --env-file .env \
 
 掛載專案目錄請加上 `-v /path/to/project:/workspace`。
 
+映像檔以 Debian slim（glibc）為基礎，因此掛載到 `/workspace` 的
+Linux x86-64 glibc CLI（例如 PyInstaller standalone bundle）可直接執行。
+
 ## 環境變數
 
 | 變數 | 必填 | 預設值 | 說明 |

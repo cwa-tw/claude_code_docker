@@ -5,7 +5,7 @@ This project provides a Docker image (`cwa-claude-code`) that runs the Claude Co
 
 ## Key Architecture
 
-- **Dockerfile**: Installs Claude Code CLI (`@anthropic-ai/claude-code`) on Node.js with default `ANTHROPIC_BASE_URL=https://litellm.cwa.gov.tw`
+- **Dockerfile**: Installs Claude Code CLI (`@anthropic-ai/claude-code`) on Debian-based Node.js with default `ANTHROPIC_BASE_URL=https://litellm.cwa.gov.tw`; glibc supports mounted standalone Linux CLI tools
 - **entrypoint.sh**: Maps `CWA_LITELLM_KEY` → `ANTHROPIC_AUTH_TOKEN` (if `ANTHROPIC_AUTH_TOKEN` is not set), then launches `claude`
 - **Environment Configuration**: LiteLLM connection managed via `-e CWA_LITELLM_KEY=...` or `--env-file .env`
 - **Persistence**: User sessions and settings stored in `~/.claude` (volume-mounted from host)
@@ -81,7 +81,7 @@ Reference in Docker with `--env-file .env` flag.
 ## Common Tasks
 - **Update Claude Code Version**: Change the npm install version in Dockerfile
 - **Debug Container Issues**: Use `docker run -it --entrypoint /bin/bash` for interactive shells
-- **Optimize Image Size**: Use multi-stage builds, `.dockerignore`, slim base images
+- **Optimize Image Size**: Use multi-stage builds, `.dockerignore`, and Debian slim base images while retaining glibc compatibility
 
 ## Useful Links
 - [Anthropic SDK Docs](https://docs.anthropic.com/docs/home)

@@ -1,8 +1,13 @@
 # Dockerfile for Claude Code with LiteLLM integration
-FROM node:22-alpine
+#
+# Use a glibc-based image so Linux CLI tools built with PyInstaller can run
+# when their project directory is mounted into /workspace.
+FROM node:22-bookworm-slim
 
-# Install bash, su-exec (for user switching), and common utilities
-RUN apk add --no-cache bash git curl su-exec shadow
+# Install bash, gosu (for user switching), and common utilities.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends bash ca-certificates curl git gosu passwd \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Claude Code CLI globally
 RUN npm install -g @anthropic-ai/claude-code && npm cache clean --force
