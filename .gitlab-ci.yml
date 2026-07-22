@@ -70,6 +70,8 @@ sync-release-notes:
   script:
     - test -n "$GH_TOKEN"
     - test "$(pixi run git describe --tags --abbrev=0)" = "$RELEASE_TAG"
-    - pixi run git-cliff --current --strip header --output release-notes.md
+    - |
+      previous_tag=$(pixi run git describe --tags --abbrev=0 "$RELEASE_TAG^")
+      pixi run git-cliff --strip header --output release-notes.md "$previous_tag..$RELEASE_TAG"
     - pixi run gh release edit "$RELEASE_TAG" --repo "$GH_REPO" --title "$RELEASE_TAG" --notes-file release-notes.md
     - pixi run glab release create "$RELEASE_TAG" --repo "$CI_PROJECT_URL" --name "$RELEASE_TAG" --notes-file release-notes.md
