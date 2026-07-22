@@ -1,0 +1,45 @@
+stages:
+  - release
+
+release:
+  stage: release
+  image: ghcr.io/prefix-dev/pixi:0.70.0
+  variables:
+    GIT_DEPTH: "0"
+    PIXI_CACHE_DIR: "$CI_PROJECT_DIR/.pixi-cache"
+    GH_TOKEN: "$CWA_GITHUB_TOKEN"
+    GH_REPO: "cwa-tw/claude_code_docker"
+  cache:
+    key:
+      files:
+        - pixi.lock
+    paths:
+      - .pixi-cache
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^\d+\.\d+\.\d+$/'
+    - when: never
+  before_script:
+    - pixi install --locked
+    # GitLab Runner invokes glab for the release keyword after the script.
+    - ln -sf "$CI_PROJECT_DIR/.pixi/envs/default/bin/glab" /usr/local/bin/glab
+  script:
+    - test -n "$GH_TOKEN"
+    - pixi run git-cliff --current --strip header --output release-notes.md
+    - pixi run gh auth setup-git
+    - pixi run git push "https://github.com/$GH_REPO.git" "HEAD:refs/heads/main"
+    - pixi run git push "https://github.com/$GH_REPO.git" "refs/tags/$CI_COMMIT_TAG:refs/tags/$CI_COMMIT_TAG"
+    - |
+      if pixi run gh release view "$CI_COMMIT_TAG" --repo "$GH_REPO" >/dev/null 2>&1; then
+        pixi run gh release edit "$CI_COMMIT_TAG" --repo "$GH_REPO" \
+          --title "Release $CI_COMMIT_TAG" \
+          --notes-file release-notes.md
+      else
+        pixi run gh release create "$CI_COMMIT_TAG" --repo "$GH_REPO" \
+          --verify-tag \
+          --title "Release $CI_COMMIT_TAG" \
+          --notes-file release-notes.md
+      fi
+  release:
+    tag_name: "$CI_COMMIT_TAG"
+    name: "Release $CI_COMMIT_TAG"
+    description: "./release-notes.md"

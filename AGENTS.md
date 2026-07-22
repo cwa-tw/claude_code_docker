@@ -64,6 +64,9 @@ ANTHROPIC_DEFAULT_HAIKU_MODEL=your-model           # optional model override
 .
 ├── Dockerfile          # Container: installs Claude Code CLI, sets entrypoint
 ├── entrypoint.sh       # Maps CWA_LITELLM_KEY → ANTHROPIC_AUTH_TOKEN, launches claude
+├── cliff.toml          # git-cliff release-note formatting
+├── pixi.toml           # Pinned release tooling used by GitLab CI
+├── .gitlab-ci.yml      # Publishes matching release notes to GitLab and GitHub
 ├── .dockerignore       # Files to exclude from Docker build
 ├── .env.example        # Template for LiteLLM environment variables
 ├── AGENTS.md           # Agent instructions
@@ -80,6 +83,7 @@ Reference in Docker with `--env-file .env` flag.
 
 ## Common Tasks
 - **Update Claude Code Version**: Change the npm install version in Dockerfile
+- **Create a Release**: Use an exact `major.minor.patch` tag; GitLab CI uses git-cliff to publish the same notes to GitLab and CWA GitHub
 - **Debug Container Issues**: Use `docker run -it --entrypoint /bin/bash` for interactive shells
 - **Optimize Image Size**: Use multi-stage builds, `.dockerignore`, and Debian slim base images while retaining glibc compatibility
 
