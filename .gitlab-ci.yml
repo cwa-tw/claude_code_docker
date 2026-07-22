@@ -4,6 +4,8 @@ stages:
 release:
   stage: release
   image: ghcr.io/prefix-dev/pixi:0.70.0
+  tags:
+    - release
   variables:
     GIT_DEPTH: "0"
     PIXI_CACHE_DIR: "$CI_PROJECT_DIR/.pixi-cache"
